@@ -33,12 +33,18 @@ SRCDIR=`readlink -e Omni-C/`
 # Essentially taken from https://omni-c.readthedocs.io/en/latest/library_qc.html
 # Would possibly work for traditional Hi-C, Micro-C and HiCHiP
 
-samtools faidx ${ref}
-cut -f1,2 ${ref}".fai" > ${outprefix}".genome"
+# softlink reference, make indices
+mkdir in_ref; cd in_ref; ln -s $ref
+ln_ref=$PWD/`basename $ref`
+samtools faidx $ln_ref
+bwa index $ln_ref
+cd ..
+
+cut -f1,2 ${ln_ref}".fai" > ${outprefix}".genome"
 genome=${outprefix}".genome"
 bwa mem -5SP -T0 -t${cores} \
     -R "@RG\tID:$rg\tSM:$rg\tLB:$rg\tPL:ILLUMINA\tPU:none" \
-    $ref \
+    $ln_ref \
     $fq1 \
     $fq2 \
 | $pt parse \

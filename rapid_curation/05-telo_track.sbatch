@@ -16,13 +16,13 @@ rt="singularity exec runTelo.sif"
 teloseq="AACCCT"
 
 
-ref=contig_asm.fasta
+ref=candidate_scaff.fasta
 ref_tmp=`basename $ref`
 ref_base=${ref_tmp%.*}
 outprefix="sample1"
 cores=4
 # Made in first step
-genome=/lupus/proj/ngi2016004/private/remi/analysis/ERGA_arctic_fox/test_rapidcur/rcrun/01-pretext/AF.genome
+genome=/path/to/${outprefix}.genome
 #export SINGULARITYENV_PATH=/opt/conda/envs/rapid_curation/bin
 export SINGULARITYENV_LD_LIBRARY_PATH=/usr/lib/jvm/java-11-openjdk-amd64/lib/:/usr/lib/gcc/x86_64-linux-gnu/7.4.0
 export SINGULARITYENV_VGP_PIPELINE=/software/pipeline

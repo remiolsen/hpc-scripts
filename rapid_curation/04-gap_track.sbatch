@@ -13,11 +13,11 @@ set -f
 # https://gitlab.com/wtsi-grit/rapid-curation/-/tree/main/rapid_hic_software
 rg="singularity exec runGap.sif"
 
-ref=contig_asm.fasta
+ref=candidate_scaff.fasta
 outprefix="sample1"
 cores=4
 # Made in first step
-genome=sample1.genome
+genome=/path/to/${outprefix}.genome
 
 $rg seqtk cutN -n 1 -g $ref > ${outprefix}.gap.bed
 $rg /scripts/getbg.sh ${outprefix}.gap.bed > ${outprefix}.gap.bedgraph

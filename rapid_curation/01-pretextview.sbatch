@@ -14,7 +14,7 @@ pt="singularity exec pairtools_0.3.0--py38h8582fc7_4.sif pairtools"
 # https://gitlab.com/wtsi-grit/rapid-curation/-/tree/main/rapid_hic_software
 rh="singularity exec runHiC.sif"
 
-ref=contig_asm.fasta
+ref=candidate_scaff.fasta
 fq1=R1_001.fastq.gz
 fq2=R2_001.fastq.gz
 outprefix="sample1"

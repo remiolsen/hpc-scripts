@@ -14,7 +14,7 @@ set -f
 # https://gitlab.com/wtsi-grit/rapid-curation/-/tree/main/rapid_hic_software
 rc="singularity exec runCoverage.sif"
 
-ref=contig_asm.fasta
+ref=candidate_scaff.fasta
 
 # PacBio input files as a list, eg:
 # reads1.bam
@@ -24,7 +24,7 @@ pac_fofn=fofn.txt
 outprefix="sample1"
 cores=16
 # Made in previous step
-genome=sample1.genome
+genome=/path/to/${outprefix}.genome
 
 # Index ref
 mkdir in_ref; cd in_ref; ln -s $ref

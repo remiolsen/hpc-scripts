@@ -13,11 +13,11 @@ set -f
 # https://gitlab.com/wtsi-grit/rapid-curation/-/tree/main/rapid_hic_software
 rr="singularity exec runRepeat.sif"
 
-ref=contig_asm.fasta
+ref=candidate_scaff.fasta
 outprefix="sample1"
 cores=4
 # Made in first step
-genome=sample1.genome
+genome=/path/to/${outprefix}.genome
 binsize=10000
 
 $rr /software/windowmasker  -mk_counts -in $ref -out ${outprefix}.stage1

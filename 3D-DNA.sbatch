@@ -6,7 +6,7 @@
 #SBATCH -J 3ddna.job
 #SBATCH -o 3ddna.out
 #SBATCH -e 3ddna.err
-#SBATCH --mail-user remi-andre.olsen@scilifelab.se
+#SBATCH --mail-user <your email>
 #SBATCH --mail-type=ALL
 
 set -e

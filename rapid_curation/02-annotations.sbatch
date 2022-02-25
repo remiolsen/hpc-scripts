@@ -1,8 +1,8 @@
 #!/bin/bash -l
 #SBATCH -A <your account>
-#SBATCH -o rc_cov.out
-#SBATCH -e rc_cov.err
-#SBATCH -J rc_cov.job
+#SBATCH -o rc_annotation.out
+#SBATCH -e rc_annotation.err
+#SBATCH -J rc_annotation.job
 #SBATCH -p node -n 4 
 #SBATCH -t 1-00:00:00
 #SBATCH --mail-user <your email>
@@ -94,4 +94,4 @@ export SINGULARITYENV_LD_LIBRARY_PATH=/usr/lib/jvm/java-11-openjdk-amd64/lib/:/u
 export SINGULARITYENV_VGP_PIPELINE=/software/pipeline
 
 $rt /pipelines/telomere/find_telomere.sh $ref $teloseq $PWD
-$rt /scripts/get_telomere_result.sh  $PWD/${ref_base}.windows $PWD/${outprefix}_telomere.bed $PWD/${outprefix}_telomere.bedgraph
+$rt /scripts/get_telomere_result.sh  $PWD/${ref_base}.windows $PWD/${outprefix}_telomere.bed $PWD/${outprefix}.telomere.bedgraph

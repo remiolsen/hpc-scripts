@@ -1,0 +1,8 @@
+name: rapidcuration_extras
+channels:
+  - bioconda
+dependencies:
+  - bioconda::pyfastaq
+  - bioconda::perl-bioperl
+  - bioconda::pretextgraph
+  - bioconda::ucsc-bigwigtobedgraph

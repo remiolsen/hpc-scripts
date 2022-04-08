@@ -3,7 +3,7 @@
 #SBATCH -o rc_annotation.out
 #SBATCH -e rc_annotation.err
 #SBATCH -J rc_annotation.job
-#SBATCH -p node -n 4 
+#SBATCH -p core -n 4 
 #SBATCH -t 1-00:00:00
 #SBATCH --mail-user <your email>
 #SBATCH --mail-type=ALL

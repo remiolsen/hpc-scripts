@@ -6,7 +6,7 @@ outprefix="sample1"
 ref=candidate_scaff.fasta
 
 # git clone https://gitlab.com/wtsi-grit/rapid-curation.git
-# Note 25th Feb. These scripts might contain some hardcoded paths that need to be manually edited.
+# Note 2022-02-25. These scripts might contain some hardcoded paths that need to be manually edited.
 rc=/path/to/rapid-curation/
 
 ## Note! this file is more of a cookbook than a script or a pipeline.

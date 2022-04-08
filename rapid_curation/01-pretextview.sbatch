@@ -3,7 +3,7 @@
 #SBATCH -o rc_pretext.out
 #SBATCH -e rc_pretext.err
 #SBATCH -J rc_pretext.job
-#SBATCH -p node -n 16 
+#SBATCH -p core -n 16 
 #SBATCH -t 2-00:00:00
 #SBATCH --mail-user <your email>
 #SBATCH --mail-type=ALL

@@ -4,7 +4,7 @@
 #SBATCH -e rc_pretext.err
 #SBATCH -J rc_pretext.job
 #SBATCH -p core -n 16 
-#SBATCH -t 2-00:00:00
+#SBATCH -t 6-00:00:00
 #SBATCH --mail-user <your email>
 #SBATCH --mail-type=ALL
 #SBATCH --qos=normal
@@ -76,7 +76,7 @@ cat $ptbed | $rh paste -d '\t' - - | $rh sed 's/-/_/g' | $rh awk 'BEGIN {FS="\t"
 outcool=${outprefix}.cool
 outmcool=${outprefix}.mcool
 $rh cooler cload pairs -0 -c1 3 -p1 4 -c2 7 -p2 8 $genome:1000 $prebed $outcool 
-$rh cooler zoomify -o $outmcool $outcool 
+$rh cooler zoomify -n $cores -o $outmcool $outcool 
 
 ## 5 Pretext
 outpretext=${outprefix}.pretext

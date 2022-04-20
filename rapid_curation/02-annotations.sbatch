@@ -93,5 +93,6 @@ ref_base=${ref_tmp%.*}
 export SINGULARITYENV_LD_LIBRARY_PATH=/usr/lib/jvm/java-11-openjdk-amd64/lib/:/usr/lib/gcc/x86_64-linux-gnu/7.4.0
 export SINGULARITYENV_VGP_PIPELINE=/software/pipeline
 
+# check this prefix
 $rt /pipelines/telomere/find_telomere.sh $ref $teloseq $PWD
 $rt /scripts/get_telomere_result.sh  $PWD/${ref_base}.windows $PWD/${outprefix}_telomere.bed $PWD/${outprefix}.telomere.bedgraph

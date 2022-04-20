@@ -15,10 +15,8 @@ rc=/path/to/rapid-curation/
 # 1) Add annotations to pretextview file
 annotation_folder="/path/to/annotation"
 
-$re bigWigToBedGraph ${annotation_folder}/${outprefix}.coverage.bw /dev/stdout | \ 
-$re PretextGraph -i ${annotation_folder}/${outprefix}.pretext -n "coverage" -o ${outprefix}.annotated.pretext
-$re bigWigToBedGraph ${annotation_folder}/${outprefix}.repeat_density.bw /dev/stdout | \ 
-$re PretextGraph -i ${outprefix}.annotated.pretext -n "repeat density" 
+$re bigWigToBedGraph ${annotation_folder}/${outprefix}.coverage.bw /dev/stdout | $re PretextGraph -i ${annotation_folder}/${outprefix}.pretext -n "coverage" -o ${outprefix}.annotated.pretext
+$re bigWigToBedGraph ${annotation_folder}/${outprefix}.repeat_density.bw /dev/stdout | $re PretextGraph -i ${outprefix}.annotated.pretext -n "repeat density" 
 cat ${annotation_folder}/${outprefix}.gap.bedgraph | $re PretextGraph -i ${outprefix}.annotated.pretext -n "gaps"
 cat ${annotation_folder}/${outprefix}.telomere.bedgraph | $re PretextGraph -i ${outprefix}.annotated.pretext -n "telomeres"
 

@@ -119,7 +119,11 @@ ref_base=${ref_tmp%.*}
 #$rt /scripts/get_telomere_result.sh  $PWD/${ref_base}.windows $PWD/${outprefix}_telomere.bed $PWD/${outprefix}.telomere.bedgraph
 
 ./find_telomere.sh $ln_ref $teloseq $PWD
-./get_telomere_result.sh  $PWD/${ref_base}.windows $PWD/${outprefix}_telomere.bed $PWD/${outprefix}.telomere.bedgraph
+
+# Note. GRIT script outputs a broken bedgraph
+awk 'BEGIN{OFS="\t"}{print $1,$2,$3,$4,$5,int($6*100)}' $PWD/${ref_base}.windows > $PWD/${ref_base}.fixed.windows
+
+./get_telomere_result.sh  $PWD/${ref_base}.fixed.windows $PWD/${outprefix}_telomere.bed $PWD/${outprefix}.telomere.bedgraph
 
 # Use the new telomer script in tandem, rerun above as needed
 $re python $telo_finder $ln_ref

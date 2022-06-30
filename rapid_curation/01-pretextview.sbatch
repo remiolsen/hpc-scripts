@@ -21,8 +21,8 @@ outprefix="sample1"
 rg="sample1"
 cores=16
 
-# Adapted to IRMA, change if necessary
-export SINGULARITY_BIND="/lupus:/lupus"
+# Adapted to Miarka, change if necessary
+export SINGULARITY_BIND="/vulpes:/vulpes"
 
 ## 1 pairtools for mapping and deduping (instead of arima pipe)
 
@@ -42,24 +42,23 @@ $rh bwa mem -5SP -T0 -t${cores} \
     $fq1 \
     $fq2 \
 | $pt parse \
-	--chroms-path ${genome} \
-	--min-mapq 30 \
-	--walks-policy 5unique \
-	--max-inter-align-gap 50 \
-      	--nproc-in ${cores} --nproc-out ${cores} \
+        --chroms-path ${genome} \
+        --min-mapq 30 \
+        --walks-policy 5unique \
+        --max-inter-align-gap 50 \
+        --nproc-in ${cores} --nproc-out ${cores} \
 | $pt sort  \
-	--nproc ${cores} \
+        --nproc ${cores} \
 | $pt dedup \
-	--nproc-in ${cores} --nproc-out ${cores} \
-	--mark-dups  \
- 	--output-stats ${outprefix}-PT.stats.txt \
-	--output-dups - \
+        --nproc-in ${cores} --nproc-out ${cores} \
+        --mark-dups  \
+        --output-stats ${outprefix}-PT.stats.txt \
 | $pt split \
-	--nproc-in ${cores} --nproc-out ${cores} \
-	--output-pairs ${outprefix}.PT.pairs.gz  \
-	--output-sam - \
+        --nproc-in ${cores} --nproc-out ${cores} \
+        --output-pairs ${outprefix}.PT.pairs.gz  \
+        --output-sam - \
 | $rh samtools view -bS - \
-| $rh samtools sort -@${cores} - -o $ptbam 
+| $rh samtools sort -@${cores} - -o $ptbam
 
 
 $rh samtools index $ptbam
@@ -67,7 +66,7 @@ $rh samtools index $ptbam
 ## 2 bam2bed
 ptbed=${outprefix}-PT.bed
 $rh samtools view -@4 -u -F0x400 $ptbam | $rh bamToBed | sort -k4 --parallel=8 -S50G > $ptbed
- 
+
 ## 3 HiGlass start
 prebed=${outprefix}.pre.bed
 cat $ptbed | $rh paste -d '\t' - - | $rh sed 's/-/_/g' | $rh awk 'BEGIN {FS="\t"; OFS="\t"} {if(NF>=12){ if ($1 > $7) {print substr($4,1,length($4)-2),$12,$7,$8,"16",$6,$1,$2,"8",$11,$5} else { print substr($4,1,length($4)-2),$6,$1,$2,"8",$12,$7,$8,"16",$5,$11} }}' | $rh tr '\-+' '01'  | $rh sort --parallel=8 -S10G -k3,3d -k7,7d > $prebed
@@ -75,8 +74,8 @@ cat $ptbed | $rh paste -d '\t' - - | $rh sed 's/-/_/g' | $rh awk 'BEGIN {FS="\t"
 ## 4 HiGlass end
 outcool=${outprefix}.cool
 outmcool=${outprefix}.mcool
-$rh cooler cload pairs -0 -c1 3 -p1 4 -c2 7 -p2 8 $genome:1000 $prebed $outcool 
-$rh cooler zoomify -n $cores -o $outmcool $outcool 
+$rh cooler cload pairs -0 -c1 3 -p1 4 -c2 7 -p2 8 $genome:1000 $prebed $outcool
+$rh cooler zoomify -n $cores -o $outmcool $outcool
 
 ## 5 Pretext
 outpretext=${outprefix}.pretext

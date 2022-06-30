@@ -9,7 +9,7 @@
 #SBATCH --mail-type=ALL
 #SBATCH --qos=normal
 
-set -f
+set -e
 
 ## Input parameters
 
@@ -18,6 +18,12 @@ rc="singularity exec runCoverage.sif"
 rr="singularity exec runRepeat.sif"
 rg="singularity exec runGap.sif"
 rt="singularity exec runTelo.sif"
+
+# singularity pull docker://remiolsen/rapidcuration_extras:20220629
+re="singularity exec rapidcuration_extras_20220629.sif"
+
+# For telo finder script
+export PATH="/path/to/jellyfish/:$PATH"
 
 pac_fofn=fofn.txt
 # PacBio input files as a list, eg:
@@ -33,8 +39,10 @@ genome=/path/to/${outprefix}.genome
 binsize=10000
 # find your telomere motif here, https://github.com/tolkit/a-telomeric-repeat-database/tree/main/data/curated
 teloseq="AACCCT"
+# Example: found using telo finder script
+#teloseq="AAGAG"
 
-## 1) Coverage track
+# 1) Coverage track
 
 # Index ref
 mkdir in_ref; cd in_ref; ln -s $ref
@@ -46,20 +54,25 @@ cd ..
 pnum=0
 for f in $(cat $pac_fofn);
 do 
-	$rc samtools fastq $f | $rc minimap2 --MD -t $cores -a ${ln_ref}.mmi - | $rc samtools view -Sb - > ${outprefix}.part_${pnum}.bam
+	$rc samtools fastq $f | $rc minimap2 --MD -t $cores -a ${ln_ref} - | $rc samtools view -Sb - > ${outprefix}.part_${pnum}.bam
 	let pnum++
 done
 
+printf '%s\n' *.part_*.bam > inputbams.fofn
+
 # merge, sort, make pri bam files
-$rc samtools merge -f ${outprefix}.merged.bam ${outprefix}.part_*.bam 
+$rc samtools merge -b inputbams.fofn -f ${outprefix}.merged.bam 
 $rc samtools sort -T sort_tmp -o ${outprefix}.merged.sorted.bam ${outprefix}.merged.bam
 $rc samtools view -b -hF 256 ${outprefix}.merged.sorted.bam > ${outprefix}.primary.bam
 
 # cleanup 
 rm *.part_*.bam *.merged.bam *.merged.sorted.bam
 
+# Use HiC data and bwa mem mapping from previous step
+ln -s ${outprefix}-PT.bam ${outprefix}.primary.bam
+
 # Make bed and wig
-$rc bamToBed -i ${outprefix}.primary.bam | sort -k1,1 -T sort_tmp > ${outprefix}.geval.bed
+$rc bamToBed -i ${outprefix}.primary.bam | sort -k1,1 > ${outprefix}.geval.bed
 $rc genomeCoverageBed -bga -split -i ${outprefix}.geval.bed -g $genome | sort -k1,1 -k2,2n > ${outprefix}.coverage.bed
 $rc bedGraphToBigWig ${outprefix}.coverage.bed $genome ${outprefix}.coverage.bw
 
@@ -86,13 +99,25 @@ $rg /scripts/getbg.sh ${outprefix}.gap.bed > ${outprefix}.gap.bedgraph
 
 ## 4) Telomere track
 
-ref_tmp=`basename $ref`
+ref_tmp=`basename $ln_ref`
 ref_base=${ref_tmp%.*}
 
-#export SINGULARITYENV_PATH=/opt/conda/envs/rapid_curation/bin
-export SINGULARITYENV_LD_LIBRARY_PATH=/usr/lib/jvm/java-11-openjdk-amd64/lib/:/usr/lib/gcc/x86_64-linux-gnu/7.4.0
-export SINGULARITYENV_VGP_PIPELINE=/software/pipeline
+# Note 2022-06-29. Callin the baked in script inside the "runtelo" images does not seem to work
+# For now copy the scripts to analysis folder
+# $rt cp /pipelines/telomere/find_telomere.sh .
+# $rt cp /pipelines/telomere/telomere.jar .
+# /scripts/get_telomere_result.sh
+# /pipelines/telomere/find_telomere 
 
-# check this prefix
-$rt /pipelines/telomere/find_telomere.sh $ref $teloseq $PWD
-$rt /scripts/get_telomere_result.sh  $PWD/${ref_base}.windows $PWD/${outprefix}_telomere.bed $PWD/${outprefix}.telomere.bedgraph
+#export SINGULARITYENV_PATH=/opt/conda/envs/rapid_curation/bin
+#export SINGULARITYENV_LD_LIBRARY_PATH=/usr/lib/jvm/java-11-openjdk-amd64/lib/:/usr/lib/gcc/x86_64-linux-gnu/7.4.0
+#export SINGULARITYENV_VGP_PIPELINE=/software/pipeline
+
+#$rt /pipelines/telomere/find_telomere.sh $ln_ref $teloseq $PWD
+#$rt /scripts/get_telomere_result.sh  $PWD/${ref_base}.windows $PWD/${outprefix}_telomere.bed $PWD/${outprefix}.telomere.bedgraph
+
+./find_telomere.sh $ln_ref $teloseq $PWD
+./get_telomere_result.sh  $PWD/${ref_base}.windows $PWD/${outprefix}_telomere.bed $PWD/${outprefix}.telomere.bedgraph
+
+# Use the new telomer script in tandem, rerun above as needed
+$re python $telo_finder $ln_ref

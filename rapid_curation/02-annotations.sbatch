@@ -94,6 +94,8 @@ $rr bedGraphToBigWig ${outprefix}.density_nodot.bed sorted.genome ${outprefix}.r
 
 ## 3) Gap track 
 
+# Note 2022-06-29 Might give invalid bedgraph file. Ivestigate
+
 $rg seqtk cutN -n 1 -g $ref > ${outprefix}.gap.bed
 $rg /scripts/getbg.sh ${outprefix}.gap.bed > ${outprefix}.gap.bedgraph
 

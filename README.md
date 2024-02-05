@@ -20,6 +20,10 @@ This is a loose collection scripts written to be run on HPCs with a SLURM schedu
 
   search for analysis job logs and results then tarball them
 
+## slurm_jobutil.sh
+
+  Outputs various perfomance stats for your slurm sbatch job
+
 ## juicer.sbatch
 
   Run Juicer Hi-C pre-processing, stop early before .hic generation
